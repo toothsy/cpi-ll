@@ -45,6 +45,10 @@ func main() {
 			fmt.Printf("Inserted node(s) with following data '%s' into the circular linked list.\n", data)
 
 		case "s":
+			if len(cllCollection) == 0 {
+				fmt.Println("No nodes inserted, please insert first")
+				continue
+			}
 			fmt.Println("Enter word to search:")
 			data, _ := reader.ReadString('\n')
 			data = strings.TrimSpace(data)
@@ -62,6 +66,10 @@ func main() {
 			}
 
 		case "d":
+			if len(cllCollection) == 0 {
+				fmt.Println("No nodes inserted, please insert first")
+				continue
+			}
 			fmt.Println("Enter word to delete:")
 			data, _ := reader.ReadString('\n')
 			data = strings.TrimSpace(data)
@@ -79,6 +87,10 @@ func main() {
 				fmt.Printf("Node with data '%s' not found in the circular linked list.\n", data)
 			}
 		case "-d":
+			if len(cllCollection) == 0 {
+				fmt.Println("No nodes inserted, please insert first")
+				continue
+			}
 			printCollection(cllCollection)
 
 		case "q":
