@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
@@ -17,85 +18,79 @@ func createIndividualCLL(cllCollection map[byte]*cll.CLLNode, word string) {
 	}
 	cllCollection[word[0]] = &cll.CLLNode{}
 	cllCollection[word[0]].Insert(word)
-	fmt.Println(cllCollection)
 }
 
 func main() {
 	cllCollection := cll.Init()
-	if len(os.Args) < 2 {
-		fmt.Println("Invalid arguments. Usage: go run main.go [option] [data]")
-		fmt.Println("Options:")
-		fmt.Println("  -insert [data0,data1,data2...]    Insert a node with the given data separated by comma")
-		fmt.Println("  -search [data]    			    Search for a node with the given data")
-		fmt.Println("  -delete [data]    			    Delete a node with the given data")
-		fmt.Println("  -display          			    Display the circular linked list")
-		return
-	}
+	reader := bufio.NewReader(os.Stdin)
 
-	option := os.Args[1]
+	for {
+		fmt.Println("\nEnter 'i' to insert, 's' to search, 'd' to delete, '-d' to display, 'q' to quit:")
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSpace(input)
 
-	switch option {
-	case "-insert":
-		if len(os.Args) < 3 {
-			fmt.Println("Missing data argument. Usage: go run main.go -insert [data0,data1,data2...] separated by comma")
+		switch input {
+		case "i":
+			fmt.Println("Enter word(s) to insert separated by comma:")
+			data, _ := reader.ReadString('\n')
+			data = strings.TrimSpace(data)
+
+			for _, word := range strings.Split(data, ",") {
+				if len(word) == 0 {
+					continue
+				}
+				capitalizedWord := cases.Title(language.English).String(word)
+				createIndividualCLL(cllCollection, capitalizedWord)
+			}
+			fmt.Printf("Inserted node(s) with following data '%s' into the circular linked list.\n", data)
+
+		case "s":
+			fmt.Println("Enter word to search:")
+			data, _ := reader.ReadString('\n')
+			data = strings.TrimSpace(data)
+			capitalizedWord := cases.Title(language.English).String(data)
+			wordCLL := cllCollection[capitalizedWord[0]]
+			if wordCLL == nil {
+				fmt.Printf("Node with data '%s' not found in the circular linked list.\n", data)
+				continue
+			}
+			found := wordCLL.Search(capitalizedWord)
+			if found {
+				fmt.Printf("Node with data '%s' found in the circular linked list.\n", data)
+			} else {
+				fmt.Printf("Node with data '%s' not found in the circular linked list.\n", data)
+			}
+
+		case "d":
+			fmt.Println("Enter word to delete:")
+			data, _ := reader.ReadString('\n')
+			data = strings.TrimSpace(data)
+
+			capitalizedWord := cases.Title(language.English).String(data)
+			wordCLL := cllCollection[capitalizedWord[0]]
+			if wordCLL == nil {
+				fmt.Printf("Node with data '%s' not found in the circular linked list.\n", data)
+				continue
+			}
+			deleted := wordCLL.Delete(capitalizedWord)
+			if deleted {
+				fmt.Printf("Node with data '%s' deleted from the circular linked list.\n", data)
+			} else {
+				fmt.Printf("Node with data '%s' not found in the circular linked list.\n", data)
+			}
+		case "-d":
+			printCollection(cllCollection)
+
+		case "q":
+			fmt.Println("Exiting the program...")
 			return
-		}
-		csdata := os.Args[2]
-		for _, word := range strings.Split(csdata, ",") {
-			word = cases.Title(language.English).String(word)
-			createIndividualCLL(cllCollection, word)
+
+		default:
+			fmt.Println("Invalid input. Please try again.")
 
 		}
-		fmt.Printf("Inserted node with following data '%s' into the circular linked list.\n", csdata)
-
-	case "-search":
-		if len(os.Args) < 3 {
-			fmt.Println("Missing data argument. Usage: go run main.go -search [data]")
-			return
-		}
-		data := os.Args[2]
-		wordCLL := cllCollection[data[0]]
-		found := wordCLL.Search(data)
-		if found {
-			fmt.Printf("Node with data '%s' found in the circular linked list.\n", data)
-		} else {
-			fmt.Printf("Node with data '%s' not found in the circular linked list.\n", data)
-		}
-
-	case "-delete":
-		if len(os.Args) < 3 {
-			fmt.Println("Missing data argument. Usage: go run main.go -delete [data]")
-			return
-		}
-		data := os.Args[2]
-		wordCLL := cllCollection[data[0]]
-		deleted := wordCLL.Delete(data)
-		if deleted {
-			fmt.Printf("Node with data '%s' deleted from the circular linked list.\n", data)
-		} else {
-			fmt.Printf("Node with data '%s' not found in the circular linked list.\n", data)
-		}
-
-	case "-display":
-		printCollection(cllCollection)
-	case "-help":
-		fmt.Println("Invalid option. Usage: go run main.go [option] [data]")
-		fmt.Println("Options:")
-		fmt.Println("  -insert [data0,data1,data2...]    Insert a node with the given data separated by comma")
-		fmt.Println("  -search [data]    			    Search for a node with the given data")
-		fmt.Println("  -delete [data]    			    Delete a node with the given data")
-		fmt.Println("  -display          			    Display the circular linked list")
-
-	default:
-		fmt.Println("Invalid option. Usage: go run main.go [option] [data]")
-		fmt.Println("Options:")
-		fmt.Println("  -insert [data0,data1,data2...]    Insert a node with the given data")
-		fmt.Println("  -search [data]    			    Search for a node with the given data")
-		fmt.Println("  -delete [data]    			    Delete a node with the given data")
-		fmt.Println("  -display          			    Display the circular linked list")
 
 	}
-	printCollection(cllCollection)
 
 }
 
@@ -105,4 +100,5 @@ func printCollection(cllCollection map[byte]*cll.CLLNode) {
 		fmt.Println(string(key))
 		wordCLL.Display()
 	}
+	fmt.Println("")
 }

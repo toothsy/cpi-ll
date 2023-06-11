@@ -2,6 +2,7 @@ package cll
 
 import (
 	"fmt"
+	"strings"
 )
 
 type Node struct {
@@ -28,11 +29,14 @@ func (cll *CLLNode) Insert(data string) *CLLNode {
 		cll.Head = newNode
 		cll.Tail = newNode
 		newNode.Next = newNode
-	} else if len(data) <= len(cll.Head.Word) {
+	} else if cll.Search(data) {
+		fmt.Printf("node(s) with following data '%s' is already inserted into the circular linked list.\n", data)
+
+	} else if len(data) <= len(cll.Head.Word) { //incoming word is smaller than Head word
 		newNode.Next = cll.Head
 		cll.Head = newNode
 		cll.Tail.Next = newNode
-	} else if len(data) >= len(cll.Tail.Word) {
+	} else if len(data) >= len(cll.Tail.Word) { //incoming word is longer than Head word
 		newNode.Next = cll.Head
 		cll.Tail.Next = newNode
 		cll.Tail = newNode
@@ -59,7 +63,7 @@ func (cll *CLLNode) Display() {
 
 	current := cll.Head
 	for {
-		fmt.Printf("%s ", current.Word)
+		fmt.Printf(" %s ", current.Word)
 		current = current.Next
 		if current == cll.Head {
 			break
@@ -76,7 +80,17 @@ func (cll *CLLNode) Search(data string) bool {
 
 	current := cll.Head
 	for {
-		if current.Word == data {
+		if len(current.Word) < len(data) {
+			current = current.Next
+			if current == cll.Head {
+				break
+			}
+			continue
+		}
+		if len(current.Word) > len(data) {
+			return false
+		}
+		if strings.EqualFold(current.Word, data) {
 			return true
 		}
 		current = current.Next
@@ -90,10 +104,15 @@ func (cll *CLLNode) Search(data string) bool {
 
 // Delete deletes the node with the given data from the circular linked list
 func (cll *CLLNode) Delete(data string) bool {
+	//If the node to be deleted is uninitialised head
 	if cll.Head == nil {
 		return false
 	}
 
+	//If the node to be deleted doesnt exist
+	if !cll.Search(data) {
+		return false
+	}
 	// If the node to be deleted is the head
 	if cll.Head.Word == data {
 		// If there is only one node in the list
@@ -110,8 +129,8 @@ func (cll *CLLNode) Delete(data string) bool {
 	// Search for the node to be deleted
 	prev := cll.Head
 	current := cll.Head.Next
-	for current != cll.Head {
-		if current.Word == data {
+	for current != cll.Head { //checking for the loop
+		if strings.EqualFold(current.Word, data) {
 			prev.Next = current.Next
 			if current == cll.Tail {
 				cll.Tail = prev
