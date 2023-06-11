@@ -4,7 +4,7 @@
      `git clone https://github.com/toothsy/cpi-ll`
 -    for building in unix systems, please use
      `go build`
--    for winows you can directly run the binary `cpi-ll.exe` once cloned.
+-    for windows you can directly run the binary `cpi-ll.exe` once cloned.
 
 # CLL
 
@@ -27,3 +27,4 @@
      }
      ```
 -    Tail is used for easier insertion for longer words
+-    words stored are case-insensitive, so `Hello` and `HeLLo` are same and wont be inserted

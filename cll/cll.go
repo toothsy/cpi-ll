@@ -31,7 +31,6 @@ func (cll *CLLNode) Insert(data string) *CLLNode {
 		newNode.Next = newNode
 	} else if cll.Search(data) {
 		fmt.Printf("node(s) with following data '%s' is already inserted into the circular linked list.\n", data)
-
 	} else if len(data) <= len(cll.Head.Word) { //incoming word is smaller than Head word
 		newNode.Next = cll.Head
 		cll.Head = newNode
@@ -40,7 +39,7 @@ func (cll *CLLNode) Insert(data string) *CLLNode {
 		newNode.Next = cll.Head
 		cll.Tail.Next = newNode
 		cll.Tail = newNode
-	} else {
+	} else { //finding the right place for the new node
 		current := cll.Head
 		for current.Next != cll.Head {
 			if len(data) >= len(current.Word) && len(data) < len(current.Next.Word) {
